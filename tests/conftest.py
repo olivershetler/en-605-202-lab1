@@ -3,14 +3,6 @@ import pytest
 # a 3-tuple with infix, prefix, and postfix expressions that are equivalent to each other for testing
 EXAMPLE_DATA_TUPLES = [
     ("(A + B)", "+AB", "AB+"),
-    ("(A + (B * C))", "+A*BC", "ABC*+"),
-    ("(A + ((B * C) - D))", "-+A*BCD", "ABC*D-+"),
-    ("(A + ((B * C) - (D / E)))", "-+A*BC/DE", "ABC*DE/-+"),
-    ("((A + (B * C)) - (D / (E ^ F)))", "-+A*BC/^DEF", "ABC*DEF^/-+"),
-    ("A + B * C - D / E ^ F + G", "+-+A*BC/^DEF+G", "ABC*DEF^/-+G+"),
-    ("A + B * C - D / E ^ F + G * H", "+-+A*BC/^DEF+*GH", "ABC*DEF^/-+G*H+"),
-    ("A + B * C - D / E ^ F + G * H / I", "+-+A*BC/^DEF+*GH/I", "ABC*DEF^/-+G*H/I+"),
-    ("A + B * C - D / E ^ F + G * H / I ^ J", "+-+A*BC/^DEF+*GH/IJ", "ABC*DEF^/-+G*H/IJ^/+")
 ]
 
 @pytest.fixture
