@@ -1,7 +1,7 @@
 import re
 import functools
 
-# -- Constants and Helpers --
+# Constants and Helpers
 
 # Allowed operators and their precedence/associativity
 OPERATORS = {'+', '-', '*', '/', '^'}
@@ -62,7 +62,7 @@ class Stack:
         return str(self._data)
 
 
-# -- Decorator for Preprocessing --
+# Decorator for Preprocessing and type checking
 
 def preprocess(func):
     """
@@ -78,7 +78,7 @@ def preprocess(func):
     return wrapper
 
 
-# -- Validation Functions --
+# Validation Functions
 
 def validate_infix(expression):
     """
@@ -103,7 +103,6 @@ def validate_infix(expression):
     if not stack.is_empty():
         return False
 
-    # (Further validation on token order is possible but omitted.)
     return True
 
 def validate_prefix(expression):
@@ -148,12 +147,14 @@ def validate_postfix(expression):
             stack.pop()
             stack.pop()
             stack.push('X')
+        elif token == ' ':
+            continue
         else:
             return False
     return len(stack) == 1
 
 
-# -- Conversion Functions --
+# Conversion Functions
 
 @preprocess
 def prefix_to_infix(expression):
@@ -176,6 +177,8 @@ def prefix_to_infix(expression):
             stack.push(f"({op1} {token} {op2})")
         elif is_operand(token):
             stack.push(token)
+        elif token == ' ':
+            continue
         else:
             raise ValueError(f"Unexpected token: {token}")
     if len(stack) != 1:
@@ -202,6 +205,8 @@ def postfix_to_infix(expression):
             except IndexError:
                 raise ValueError("Invalid postfix expression.")
             stack.push(f"({op1} {token} {op2})")
+        elif token == ' ':
+            continue
         else:
             raise ValueError(f"Unexpected token: {token}")
     if len(stack) != 1:

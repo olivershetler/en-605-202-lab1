@@ -3,7 +3,7 @@ from converters import *
 
 def test_prefix_to_infix(prefix_infix_cases):
     for prefix, infix in prefix_infix_cases:
-        assert postfix_to_infix(prefix) == infix
+        assert prefix_to_infix(prefix) == infix
 
 def test_prefix_to_infix_invalid(invalid_prefix_expressions):
     for expression in invalid_prefix_expressions:
