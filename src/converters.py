@@ -99,8 +99,3 @@ def postfix_to_prefix(expression):
         raise ValueError('Invalid expression')
     return infix_to_prefix(postfix_to_infix(expression))
 
-postfix_strings = ["AB + C –", "ABC +-", "AB -C + DEF -+^", "ABCDE -+ ^*EF*-"]
-
-prefix_strings = ["++A - * ^BCD/ + EF * GHI", "+-^ABC * D ** EFG"]
-
-infix_strings = ["(A + B) * (C ^(D-E) + F) – G", "A + (((B-C) * (D-E) + F)/G) ^ (H-J)"]

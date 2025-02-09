@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lab1"
+version = "0.1.0"
+description = "A simple Python project"
+authors = [
+    { name = "Oliver Shetler", email = "oshetle1@jh.edu" },
+    { name = "David Adams", email = "placeholder@jh.edu" }
+]
+readme = "README.md"
+license = { text = "MIT" }
+dependencies = [
+    "pyyaml"
+]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
