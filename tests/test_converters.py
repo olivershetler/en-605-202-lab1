@@ -1,5 +1,5 @@
 import pytest
-from src.converters import *
+from converters import *
 
 def test_prefix_to_infix(prefix_infix_cases):
     for prefix, infix in prefix_infix_cases:
