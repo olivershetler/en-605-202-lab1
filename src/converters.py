@@ -1,13 +1,22 @@
+"""This module contains all the necessary tools for converting between infix, prefix, and postfix expressions.
+
+For prefix and postfix to infix conversions, we follow the standard approach of using a stack to build the expression.
+
+We use the Shunting-Yard algorithm for infix to postfix conversion and then reverse the result for infix to prefix conversion (since the algorithm is easier to implement for postfix).
+"""
+
 import re
 import functools
 
-# Constants and Helpers
+# Constants
 
 # Allowed operators and their precedence/associativity
 OPERATORS = {'+', '-', '*', '/', '^'}
 PRECEDENCE = {'^': 4, '*': 3, '/': 3, '+': 2, '-': 2}
 # Note: '^' is right-associative; all others are left-associative.
 ASSOCIATIVITY = {'^': 'right', '+': 'left', '-': 'left', '*': 'left', '/': 'left'}
+
+# Helper functions
 
 def is_operator(token):
     """Return True if token is one of the allowed operators."""
@@ -24,11 +33,8 @@ def strip_whitespace(expression):
 def tokenize(expression):
     """
     Tokenize the expression.
-    If there are spaces, assume tokens are space–separated.
-    Otherwise, return a list of single characters.
     """
-    if " " in expression:
-        return expression.split()
+    strip_whitespace(expression)
     return list(expression)
 
 
@@ -82,25 +88,79 @@ def preprocess(func):
 
 def validate_infix(expression):
     """
-    Check if the infix expression is valid.
-    This basic validator accepts operands (letters/digits),
-    allowed operators, and round parentheses.
+    Fully validate an infix expression.
+
+    This function performs three levels of checks:
+      1. Allowed characters: the expression must consist only of letters, digits,
+         the operators (+, -, *, /, ^), and round parentheses.
+      2. Balanced parentheses: every '(' must have a corresponding ')'.
+      3. Proper token order: the tokens (operands, operators, and parentheses) must
+         be in a syntactically valid sequence. For example:
+            - The expression cannot start with an operator.
+            - Two operands cannot appear in a row.
+            - An operator cannot immediately follow an opening parenthesis.
+            - A closing parenthesis cannot appear when an operand is expected.
+
+    Returns:
+      True if the expression is valid; otherwise, False.
     """
-    # Allow letters, digits, operators, and parentheses
-    pattern = re.compile(r'^[A-Za-z0-9\+\-\*\/\^\(\)]*$')
-    if not pattern.fullmatch(expression):
+    # Step 1: Check allowed characters.
+    allowed_pattern = re.compile(r'^[A-Za-z0-9+\-*/^()]+$')
+    if not allowed_pattern.fullmatch(expression):
         return False
 
-    # Check balanced parentheses
-    stack = Stack()
-    for char in expression:
-        if char == '(':
-            stack.push(char)
-        elif char == ')':
-            if stack.is_empty():
+    # Tokenize the expression.
+    # Here we assume tokens are single characters.
+    tokens = list(expression)
+    if not tokens:
+        return False
+
+    # Step 2: Use a stack to check balanced parentheses.
+    paren_stack = []
+
+    # Step 3: Check the order of tokens.
+    # Use a flag: when True, we expect an operand or an open parenthesis.
+    # When False, we expect an operator or a closing parenthesis.
+    expecting_operand = True
+
+    for token in tokens:
+        if token == '(':
+            # Always allowed when expecting an operand.
+            paren_stack.append(token)
+            # After '(' we still expect an operand.
+            expecting_operand = True
+        elif token == ')':
+            # A closing parenthesis can only appear if we are not expecting an operand.
+            if expecting_operand:
                 return False
-            stack.pop()
-    if not stack.is_empty():
+            # There must be a matching '('.
+            if not paren_stack:
+                return False
+            paren_stack.pop()
+            # After a complete subexpression (i.e. a ')'), consider that as an operand.
+            expecting_operand = False
+        elif is_operand(token):
+            # An operand is only allowed if we were expecting one.
+            if not expecting_operand:
+                return False
+            # After an operand we expect an operator (or a closing parenthesis).
+            expecting_operand = False
+        elif is_operator(token):
+            # An operator is only allowed if we have just processed an operand or a ')'.
+            if expecting_operand:
+                return False
+            # After an operator, we expect an operand.
+            expecting_operand = True
+        else:
+            # Should not happen because of the allowed pattern.
+            return False
+
+    # Final checks:
+    # We should not be expecting an operand (i.e. the expression should not end with an operator).
+    if expecting_operand:
+        return False
+    # All open parentheses must have been closed.
+    if paren_stack:
         return False
 
     return True

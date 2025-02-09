@@ -61,9 +61,9 @@ def invalid_infix_expressions():
 @pytest.fixture
 def invalid_prefix_expressions():
     """Simple test cases for invalid prefix expressions."""
-    return ["A +", "& A B", "^ ^ A B C", "+ A B C"]
+    return ["A +", "& A B", "^ ^ A B", "+ A B C", "^ ^ ^ A B"]
 
 @pytest.fixture
 def invalid_postfix_expressions():
     """Simple test cases for invalid postfix expressions."""
-    return ["+ A", "A B &", "A B C ^ ^", "A B C +"]
+    return ["+ A", "A B &", "B C ^ ^", "A B C +", "* * * A B"]

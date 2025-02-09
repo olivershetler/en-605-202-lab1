@@ -19,7 +19,6 @@ def test_prefix_to_postfix_invalid(invalid_prefix_expressions):
         with pytest.raises(ValueError):
             prefix_to_postfix(expression)
 
-
 def test_postfix_to_infix(postfix_infix_cases):
     for postfix, infix in postfix_infix_cases:
         assert postfix_to_infix(postfix) == infix
