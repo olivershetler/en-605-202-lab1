@@ -2,8 +2,22 @@ import pytest
 
 # a 3-tuple with infix, prefix, and postfix expressions that are equivalent to each other for testing
 EXAMPLE_DATA_TUPLES = [
+    # 1. Simple addition.
     ("(A + B)", "+AB", "AB+"),
+
+    # 2. Mixed addition and multiplication.
+    ("(A + (B * C))", "+A*BC", "ABC*+"),
+
+    # 3. Exponentiation (right–associative).
+    ("(A ^ (B ^ C))", "^A^BC", "ABC^^"),
+
+    # 4. Grouped addition/subtraction with multiplication.
+    ("((A + B) * (C - D))", "*+AB-CD", "AB+CD-*"),
+
+    # 5. Combined operations with nested grouping.
+    ("((A + (B * C)) - (D / E))", "-+A*BC/DE", "ABC*+DE/-"),
 ]
+
 
 @pytest.fixture
 def infix_postfix_cases():
