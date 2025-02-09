@@ -23,8 +23,8 @@ def is_operator(token):
     return token in OPERATORS
 
 def is_operand(token):
-    """Return True if token is a digit or a letter."""
-    return token.isdigit() or token.isalpha()
+    """Return True if token is a capital letter only."""
+    return token.isalpha() and token.isupper()
 
 def strip_whitespace(expression):
     """Remove all whitespace from the expression."""
@@ -101,6 +101,8 @@ def validate_infix(expression):
             - An operator cannot immediately follow an opening parenthesis.
             - A closing parenthesis cannot appear when an operand is expected.
 
+    Additionally, the expression must contain at least one operator.
+
     Returns:
       True if the expression is valid; otherwise, False.
     """
@@ -110,70 +112,64 @@ def validate_infix(expression):
         return False
 
     # Tokenize the expression.
-    # Here we assume tokens are single characters.
     tokens = list(expression)
     if not tokens:
         return False
 
-    # Step 2: Use a stack to check balanced parentheses.
+    # Step 2: Check balanced parentheses and token order.
     paren_stack = []
-
-    # Step 3: Check the order of tokens.
-    # Use a flag: when True, we expect an operand or an open parenthesis.
-    # When False, we expect an operator or a closing parenthesis.
+    # When True we expect an operand or an open parenthesis.
+    # When False we expect an operator or a closing parenthesis.
     expecting_operand = True
 
     for token in tokens:
         if token == '(':
-            # Always allowed when expecting an operand.
             paren_stack.append(token)
-            # After '(' we still expect an operand.
             expecting_operand = True
         elif token == ')':
-            # A closing parenthesis can only appear if we are not expecting an operand.
             if expecting_operand:
                 return False
-            # There must be a matching '('.
             if not paren_stack:
                 return False
             paren_stack.pop()
-            # After a complete subexpression (i.e. a ')'), consider that as an operand.
+            # A closed parenthesis represents a complete operand.
             expecting_operand = False
         elif is_operand(token):
-            # An operand is only allowed if we were expecting one.
             if not expecting_operand:
                 return False
-            # After an operand we expect an operator (or a closing parenthesis).
             expecting_operand = False
         elif is_operator(token):
-            # An operator is only allowed if we have just processed an operand or a ')'.
             if expecting_operand:
                 return False
-            # After an operator, we expect an operand.
             expecting_operand = True
         else:
             # Should not happen because of the allowed pattern.
             return False
 
-    # Final checks:
-    # We should not be expecting an operand (i.e. the expression should not end with an operator).
-    if expecting_operand:
+    # Final checks: we must not be expecting an operand and all parentheses must be closed.
+    if expecting_operand or paren_stack:
         return False
-    # All open parentheses must have been closed.
-    if paren_stack:
+
+    # Additional check: there must be at least one operator.
+    if not any(is_operator(token) for token in tokens):
         return False
 
     return True
 
+
 def validate_prefix(expression):
     """
     Validate a prefix expression.
-    We assume that a prefix expression (with single–character tokens)
-    is valid if, when scanned from right to left,
-    every operator finds at least two operands.
-    Tokens are assumed to be contiguous (no spaces needed).
+
+    We assume that a prefix expression (with single–character tokens) is valid if,
+    when scanned from right to left, every operator finds at least two operands.
+    Additionally, the expression must contain at least one operator.
     """
     tokens = tokenize(expression)
+    # Must have at least one operator.
+    if not any(is_operator(token) for token in tokens):
+        return False
+
     stack = Stack()
     # Process tokens in reverse order.
     for token in reversed(tokens):
@@ -190,13 +186,20 @@ def validate_prefix(expression):
             return False
     return len(stack) == 1
 
+
 def validate_postfix(expression):
     """
     Validate a postfix expression.
-    We assume that a postfix expression (with single–character tokens)
-    is valid if every operator finds at least two operands when scanning left to right.
+
+    We assume that a postfix expression (with single–character tokens) is valid if,
+    when scanned from left to right, every operator finds at least two operands.
+    Additionally, the expression must contain at least one operator.
     """
     tokens = tokenize(expression)
+    # Must have at least one operator.
+    if not any(is_operator(token) for token in tokens):
+        return False
+
     stack = Stack()
     for token in tokens:
         if is_operand(token):
@@ -212,6 +215,7 @@ def validate_postfix(expression):
         else:
             return False
     return len(stack) == 1
+
 
 
 # Conversion Functions

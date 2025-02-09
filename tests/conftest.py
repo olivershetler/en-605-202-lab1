@@ -18,6 +18,60 @@ EXAMPLE_DATA_TUPLES = [
     ("((A + (B * C)) - (D / E))", "-+A*BC/DE", "ABC*+DE/-"),
 ]
 
+GENERALLY_INVALID_EXPRESSIONS = [
+    # 1. Empty expression.
+    "",
+
+    # 2. Single operand.
+    "A",
+
+    # 3. Single operator.
+    "+",
+
+    # 4. Single operator and operand.
+    "A +",
+
+    # 5. Single operator and operand.
+    "A + B C",
+
+    # 6. Wrong type (numeric)
+    123,
+
+    # 7. Wrong type (list of strings).
+    ["A", "+", "B"],
+
+    # 8. Contains invalid characters.
+    "A & B",
+
+    # 9. Contains invalid characters.
+    "X @ Y",
+]
+
+INVALID_INFIX_EXPRESSIONS = GENERALLY_INVALID_EXPRESSIONS + [
+    # 1. Imbalanced parentheses.
+    "(A + B",
+    "A + B)",
+    # 2. invalid operand order
+    "A + B +",
+]
+
+INVALID_PREFIX_EXPRESSIONS = GENERALLY_INVALID_EXPRESSIONS + [
+    # 1. Too few operands.
+    "+ A",
+    # 2. Too many operands.
+    "+ A B C",
+    # 3. invalid operand order
+    "+ A B +",
+]
+
+INVALID_POSTFIX_EXPRESSIONS = GENERALLY_INVALID_EXPRESSIONS + [
+    # 1. Too few operands.
+    "A +",
+    # 2. Too many operands.
+    "A B C +",
+    # 3. invalid operand order
+    "A + B + C",
+]
 
 @pytest.fixture
 def infix_postfix_cases():
@@ -70,14 +124,14 @@ def prefix_postfix_cases():
 @pytest.fixture
 def invalid_infix_expressions():
     """Simple test cases for invalid infix expressions."""
-    return ["A +", "A & B", "A^^B", "A + B +", "A + B C"]
+    return INVALID_INFIX_EXPRESSIONS
 
 @pytest.fixture
 def invalid_prefix_expressions():
     """Simple test cases for invalid prefix expressions."""
-    return ["A +", "& A B", "^ ^ A B", "+ A B C", "^ ^ ^ A B"]
+    return INVALID_PREFIX_EXPRESSIONS
 
 @pytest.fixture
 def invalid_postfix_expressions():
     """Simple test cases for invalid postfix expressions."""
-    return ["+ A", "A B &", "B C ^ ^", "A B C +", "* * * A B"]
+    return INVALID_POSTFIX_EXPRESSIONS
