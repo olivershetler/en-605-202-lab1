@@ -1,0 +1,6 @@
+AB+
+ABC*+
+AB+CD+*
+ABC+*D-
+ABC^^
+ABCD+*+
