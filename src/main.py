@@ -2,15 +2,16 @@ import yaml
 import os
 from pathlib import Path
 
-from src.converters import *
+from converters import *
 
 def get_config():
-    with open('resources/config.yaml') as f:
+    with open(os.getcwd() + '/src/config.yaml') as f:
         return yaml.load(f, Loader=yaml.FullLoader)
 
 def get_data_paths():
     config = get_config()
-    base_dir = Path(config['base_dir'])
+    cwd = Path(os.getcwd())
+    base_dir = cwd / Path(config['base_dir'])
     infix_path = base_dir / config['infix_file']
     prefix_path = base_dir / config['prefix_file']
     postfix_path = base_dir / config['postfix_file']
