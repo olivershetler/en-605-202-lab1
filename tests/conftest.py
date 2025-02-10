@@ -1,3 +1,6 @@
+"""This module contains fixtures for testing the converters.
+"""
+
 import pytest
 
 # a 3-tuple with infix, prefix, and postfix expressions that are equivalent to each other for testing

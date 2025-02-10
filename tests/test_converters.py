@@ -1,3 +1,14 @@
+"""This module contains tests for the converters module.
+The test function names are self-explanatory, so additional
+commentary is not provided.
+
+The one thing to note is that the test functions only test the
+conversion functions and not the helper functions. This is because
+standard CI/CD practices dictate that we should only test the
+public API of a module. The helper functions are not meant to be
+used independently, so they are not tested.
+"""
+
 import pytest
 from converters import *
 
