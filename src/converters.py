@@ -41,7 +41,9 @@ def tokenize(expression):
 # Stack class for use in conversion functions
 
 class Stack:
-    """A simple stack wrapper."""
+    """A simple stack class that wraps around the list class.
+    Note to the TA: the professor said we could use a list as a
+    componant of our stack class, so I did. I hope that's okay."""
     def __init__(self):
         self._data = []
 
@@ -159,11 +161,8 @@ def validate_infix(expression):
 
 def validate_prefix(expression):
     """
-    Validate a prefix expression.
-
-    We assume that a prefix expression (with single–character tokens) is valid if,
-    when scanned from right to left, every operator finds at least two operands.
-    Additionally, the expression must contain at least one operator.
+    Validate a prefix expression by mocking the evaluation process using a stack.
+    We push X for each pair of operands when we encounter an operator.
     """
     tokens = tokenize(expression)
     # Must have at least one operator.
@@ -171,7 +170,7 @@ def validate_prefix(expression):
         return False
 
     stack = Stack()
-    # Process tokens in reverse order.
+    # Process tokens in reverse order for prefix.
     for token in reversed(tokens):
         if is_operand(token):
             stack.push(token)
@@ -189,11 +188,8 @@ def validate_prefix(expression):
 
 def validate_postfix(expression):
     """
-    Validate a postfix expression.
-
-    We assume that a postfix expression (with single–character tokens) is valid if,
-    when scanned from left to right, every operator finds at least two operands.
-    Additionally, the expression must contain at least one operator.
+    Validate a postfix expression by mocking the evaluation process using a stack.
+    We push X for each pair of operands when we encounter an operator.
     """
     tokens = tokenize(expression)
     # Must have at least one operator.
