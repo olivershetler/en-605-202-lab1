@@ -1,6 +1,0 @@
-Input (postfix) -> Output (prefix)
-========================================
-AB + C – -> ERROR: Invalid postfix expression.
-ABC +- -> -A+BC
-AB -C + DEF -+^ -> ^+-ABC+D-EF
-ABCDE -+ ^*EF*-" -> ERROR: Invalid postfix expression.

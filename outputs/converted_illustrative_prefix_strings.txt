@@ -1,0 +1,73 @@
+Results for illustrative_prefix_strings.txt
+==================================================
+
+Original Expression: +AB
+Detected Type: prefix
+To Infix:   (A + B)
+To Postfix: AB+
+
+Original Expression: +ABC
+Detected Type: prefix
+Error processing expression: Invalid prefix expression.
+
+Original Expression: +ABC
+Detected Type: prefix
+Error processing expression: Invalid prefix expression.
+
+Original Expression: --ABC
+Detected Type: prefix
+Error processing expression: Invalid prefix expression.
+
+Original Expression: ^A^BC
+Detected Type: prefix
+To Infix:   (A ^ (B ^ C))
+To Postfix: ABC^^
+
+Original Expression: -+ABC/DE
+Detected Type: prefix
+Error processing expression: Invalid prefix expression.
+
+Original Expression: -+ABC/D^EF
+Detected Type: prefix
+Error processing expression: Invalid prefix expression.
+
+Original Expression: +A-B*C/DE
+Detected Type: prefix
+To Infix:   (A + (B - (C * (D / E))))
+To Postfix: ABCDE/*-+
+
+Expression Stacks:
+==================================================
+
+Infix Stack:
+  (A + B)
+  (A ^ (B ^ C))
+  (A + (B - (C * (D / E))))
+
+Prefix Stack:
+  +AB
+  ^A^BC
+  +A-B*C/DE
+
+Postfix Stack:
+  AB+
+  ABC^^
+  ABCDE/*-+
+
+Verifying Expression Stacks:
+==================================================
+
+Infix Stack Verification:
+  (A + B): True
+  (A ^ (B ^ C)): True
+  (A + (B - (C * (D / E)))): True
+
+Prefix Stack Verification:
+  +AB: True
+  ^A^BC: True
+  +A-B*C/DE: True
+
+Postfix Stack Verification:
+  AB+: True
+  ABC^^: True
+  ABCDE/*-+: True

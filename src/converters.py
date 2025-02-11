@@ -1,19 +1,19 @@
-"""This module contains all the necessary tools for converting between infix, prefix, and postfix expressions.
+"""
+Handles conversions between infix, prefix, and postfix expressions.
 
-For prefix and postfix to infix conversions, we follow the standard approach of using a stack to build the expression.
-
-We use the Shunting-Yard algorithm for infix to postfix conversion and then reverse the result for infix to prefix conversion (since the algorithm is easier to implement for postfix).
+Implementation uses stack-based algorithms for prefix/postfix -> infix conversions.
+For infix -> postfix, implements Shunting-Yard algorithm, with modifications for 
+infix -> prefix conversion.
 """
 
 import re
 import functools
 
-# Constants
-
-# Allowed operators and their precedence/associativity
+# Set of valid operators for expression handling
 OPERATORS = {'+', '-', '*', '/', '^'}
+# Operator precedence mapping (higher value = higher precedence)
 PRECEDENCE = {'^': 4, '*': 3, '/': 3, '+': 2, '-': 2}
-# Note: '^' is right-associative; all others are left-associative.
+# Operator associativity rules
 ASSOCIATIVITY = {'^': 'right', '+': 'left', '-': 'left', '*': 'left', '/': 'left'}
 
 # Helper functions
@@ -32,10 +32,32 @@ def strip_whitespace(expression):
 
 def tokenize(expression):
     """
-    Tokenize the expression.
+    Tokenize the expression with proper handling of operators and operands.
     """
-    strip_whitespace(expression)
-    return list(expression)
+    # First standardize the expression
+    expr = standardize_expression(expression)
+    
+    tokens = []
+    i = 0
+    while i < len(expr):
+        if expr[i] in OPERATORS:
+            # Handle double minus
+            if expr[i] == '-' and i + 1 < len(expr) and expr[i + 1] == '-':
+                tokens.append('+')
+                i += 2
+            else:
+                tokens.append(expr[i])
+                i += 1
+        elif expr[i].isalpha():
+            tokens.append(expr[i])
+            i += 1
+        elif expr[i] in '()':
+            tokens.append(expr[i])
+            i += 1
+        else:
+            i += 1  # Skip other characters
+            
+    return tokens
 
 
 # Stack class for use in conversion functions
@@ -161,29 +183,35 @@ def validate_infix(expression):
 
 def validate_prefix(expression):
     """
-    Validate a prefix expression by mocking the evaluation process using a stack.
-    We push X for each pair of operands when we encounter an operator.
+    Validate a prefix expression by counting operators and operands.
+    For a valid prefix expression, at each point reading from left to right,
+    the number of operators must be greater than operands until the end.
     """
     tokens = tokenize(expression)
-    # Must have at least one operator.
-    if not any(is_operator(token) for token in tokens):
+    if not tokens:
         return False
-
-    stack = Stack()
-    # Process tokens in reverse order for prefix.
-    for token in reversed(tokens):
-        if is_operand(token):
-            stack.push(token)
-        elif is_operator(token):
-            if len(stack) < 2:
-                return False
-            # Pop two operands and push a dummy operand.
-            stack.pop()
-            stack.pop()
-            stack.push('X')
+        
+    # First token must be an operator
+    if not is_operator(tokens[0]):
+        return False
+        
+    operator_count = 0
+    operand_count = 0
+    
+    for token in tokens:
+        if is_operator(token):
+            operator_count += 1
+        elif is_operand(token):
+            operand_count += 1
         else:
             return False
-    return len(stack) == 1
+            
+        # At any point, if we have more operands than needed, it's invalid
+        if operand_count > operator_count + 1:
+            return False
+            
+    # At the end, operands should be exactly one more than operators
+    return operand_count == operator_count + 1
 
 
 def validate_postfix(expression):
@@ -201,15 +229,19 @@ def validate_postfix(expression):
         if is_operand(token):
             stack.push(token)
         elif is_operator(token):
+            # Need at least two operands for an operator
             if len(stack) < 2:
                 return False
+            # Pop two operands and push result placeholder
             stack.pop()
             stack.pop()
             stack.push('X')
-        elif token == ' ':
+        elif token in [' ', '\t', '\n']:
             continue
         else:
             return False
+            
+    # At the end, should have exactly one result
     return len(stack) == 1
 
 
@@ -405,3 +437,52 @@ def validate_expression(expression: str, expr_type: str) -> bool:
         return False
         
     return True
+
+def standardize_expression(expr):
+    """Standardize the expression format"""
+    # Replace en-dash and em-dash with regular minus
+    expr = expr.replace('–', '-').replace('—', '-')
+    
+    # Remove all spaces and quotes
+    expr = ''.join(expr.split())
+    expr = expr.replace('"', '')
+    
+    # Handle any other special characters
+    expr = ''.join(c for c in expr if c.isalnum() or c in '+-*/^()' or c == '-')
+    
+    return expr
+
+# Test script to verify converters.py functionality
+from src.converters import *
+
+def test_conversions():
+    # Test cases from your files
+    prefix_test = "+AB"
+    postfix_test = "AB+"
+    infix_test = "A+B"
+    
+    print("Testing Prefix Expression:", prefix_test)
+    try:
+        infix = prefix_to_infix(prefix_test)
+        print("To Infix:", infix)
+        print("To Postfix:", prefix_to_postfix(prefix_test))
+    except ValueError as e:
+        print("Prefix conversion error:", e)
+        
+    print("\nTesting Postfix Expression:", postfix_test)
+    try:
+        infix = postfix_to_infix(postfix_test)
+        print("To Infix:", infix)
+        print("To Prefix:", postfix_to_prefix(postfix_test))
+    except ValueError as e:
+        print("Postfix conversion error:", e)
+        
+    print("\nTesting Infix Expression:", infix_test)
+    try:
+        print("To Prefix:", infix_to_prefix(infix_test))
+        print("To Postfix:", infix_to_postfix(infix_test))
+    except ValueError as e:
+        print("Infix conversion error:", e)
+
+if __name__ == "__main__":
+    test_conversions()

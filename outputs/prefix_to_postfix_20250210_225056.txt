@@ -1,4 +1,0 @@
-Input (prefix) -> Output (postfix)
-========================================
-++A - * ^BCD/ + EF * GHI -> ABC^D*EF+GH*/-+I+
-+-^ABC * D ** EFG -> AB^C-DEF*G**+

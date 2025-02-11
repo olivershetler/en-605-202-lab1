@@ -1,0 +1,35 @@
+Results for provided_infix_strings.txt
+==================================================
+
+Original Expression: (A + B) * (C ^(D-E) + F) – G
+Detected Type: infix
+Error processing expression: Invalid infix expression.
+
+Original Expression: A + (((B-C) * (D-E) + F)/G) ^ (H-J)
+Detected Type: infix
+To Prefix:  +A^/+*-BC-DEFG-HJ
+To Postfix: ABC-DE-*F+G/HJ-^+
+
+Expression Stacks:
+==================================================
+
+Infix Stack:
+  A+(((B-C)*(D-E)+F)/G)^(H-J)
+
+Prefix Stack:
+  +A^/+*-BC-DEFG-HJ
+
+Postfix Stack:
+  ABC-DE-*F+G/HJ-^+
+
+Verifying Expression Stacks:
+==================================================
+
+Infix Stack Verification:
+  A+(((B-C)*(D-E)+F)/G)^(H-J): True
+
+Prefix Stack Verification:
+  +A^/+*-BC-DEFG-HJ: True
+
+Postfix Stack Verification:
+  ABC-DE-*F+G/HJ-^+: True

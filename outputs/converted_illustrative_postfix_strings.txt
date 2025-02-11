@@ -1,0 +1,86 @@
+Results for illustrative_postfix_strings.txt
+==================================================
+
+Original Expression: AB+
+Detected Type: postfix
+To Infix:   (A + B)
+To Prefix:  +AB
+
+Original Expression: ABC*+
+Detected Type: postfix
+To Infix:   (A + (B * C))
+To Prefix:  +A*BC
+
+Original Expression: AB+CD+*
+Detected Type: postfix
+To Infix:   ((A + B) * (C + D))
+To Prefix:  *+AB+CD
+
+Original Expression: ABC+*D-
+Detected Type: postfix
+To Infix:   ((A * (B + C)) - D)
+To Prefix:  -*A+BCD
+
+Original Expression: ABC^^
+Detected Type: postfix
+To Infix:   (A ^ (B ^ C))
+To Prefix:  ^A^BC
+
+Original Expression: ABCD+*+
+Detected Type: postfix
+To Infix:   (A + (B * (C + D)))
+To Prefix:  +A*B+CD
+
+Expression Stacks:
+==================================================
+
+Infix Stack:
+  (A + B)
+  (A + (B * C))
+  ((A + B) * (C + D))
+  ((A * (B + C)) - D)
+  (A ^ (B ^ C))
+  (A + (B * (C + D)))
+
+Prefix Stack:
+  +AB
+  +A*BC
+  *+AB+CD
+  -*A+BCD
+  ^A^BC
+  +A*B+CD
+
+Postfix Stack:
+  AB+
+  ABC*+
+  AB+CD+*
+  ABC+*D-
+  ABC^^
+  ABCD+*+
+
+Verifying Expression Stacks:
+==================================================
+
+Infix Stack Verification:
+  (A + B): True
+  (A + (B * C)): True
+  ((A + B) * (C + D)): True
+  ((A * (B + C)) - D): True
+  (A ^ (B ^ C)): True
+  (A + (B * (C + D))): True
+
+Prefix Stack Verification:
+  +AB: True
+  +A*BC: True
+  *+AB+CD: True
+  -*A+BCD: True
+  ^A^BC: True
+  +A*B+CD: True
+
+Postfix Stack Verification:
+  AB+: True
+  ABC*+: True
+  AB+CD+*: True
+  ABC+*D-: True
+  ABC^^: True
+  ABCD+*+: True

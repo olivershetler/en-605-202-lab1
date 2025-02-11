@@ -1,4 +1,0 @@
-Input (prefix) -> Output (infix)
-========================================
-++A - * ^BCD/ + EF * GHI -> ((A + (((B ^ C) * D) - ((E + F) / (G * H)))) + I)
-+-^ABC * D ** EFG -> (((A ^ B) - C) + (D * ((E * F) * G)))
