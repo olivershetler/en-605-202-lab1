@@ -449,38 +449,3 @@ def standardize_expression(expr):
     expr = ''.join(c for c in expr if c.isalnum() or c in '+-*/^()' or c == '-')
     
     return expr
-
-# Test script to verify converters.py functionality
-from src.converters import *
-
-def test_conversions():
-    # Test cases from your files
-    prefix_test = "+AB"
-    postfix_test = "AB+"
-    infix_test = "A+B"
-    
-    print("Testing Prefix Expression:", prefix_test)
-    try:
-        infix = prefix_to_infix(prefix_test)
-        print("To Infix:", infix)
-        print("To Postfix:", prefix_to_postfix(prefix_test))
-    except ValueError as e:
-        print("Prefix conversion error:", e)
-        
-    print("\nTesting Postfix Expression:", postfix_test)
-    try:
-        infix = postfix_to_infix(postfix_test)
-        print("To Infix:", infix)
-        print("To Prefix:", postfix_to_prefix(postfix_test))
-    except ValueError as e:
-        print("Postfix conversion error:", e)
-        
-    print("\nTesting Infix Expression:", infix_test)
-    try:
-        print("To Prefix:", infix_to_prefix(infix_test))
-        print("To Postfix:", infix_to_postfix(infix_test))
-    except ValueError as e:
-        print("Infix conversion error:", e)
-
-if __name__ == "__main__":
-    test_conversions()
