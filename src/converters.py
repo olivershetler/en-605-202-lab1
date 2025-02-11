@@ -1,9 +1,8 @@
-"""
-Handles conversions between infix, prefix, and postfix expressions.
+"""This module contains all the necessary tools for converting between infix, prefix, and postfix expressions.
 
-Implementation uses stack-based algorithms for prefix/postfix -> infix conversions.
-For infix -> postfix, implements Shunting-Yard algorithm, with modifications for 
-infix -> prefix conversion.
+For prefix and postfix to infix conversions, we follow the standard approach of using a stack to build the expression.
+
+We use the Shunting-Yard algorithm for infix to postfix conversion and then reverse the result for infix to prefix conversion (since the algorithm is easier to implement for postfix).
 """
 
 import re
