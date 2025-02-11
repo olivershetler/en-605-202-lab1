@@ -107,17 +107,17 @@ def preprocess(func):
     return wrapper
 
 
-# Validation Functions
+# Validate the functions by printing True or False
 
 def validate_infix(expression):
     """
     Fully validate an infix expression.
 
-    This function performs three levels of checks:
-      1. Allowed characters: the expression must consist only of letters, digits,
+    Three level checks to debug the invalid expression inputs from initial testing.
+      - The expression must consist only of letters, digits,
          the operators (+, -, *, /, ^), and round parentheses.
-      2. Balanced parentheses: every '(' must have a corresponding ')'.
-      3. Proper token order: the tokens (operands, operators, and parentheses) must
+      - Balanced equations via '(' and a corresponding ')'.
+      - Proper token order based on its kind the tokens (operands, operators, and parentheses) must
          be in a syntactically valid sequence. For example:
             - The expression cannot start with an operator.
             - Two operands cannot appear in a row.
@@ -215,8 +215,7 @@ def validate_prefix(expression):
 
 def validate_postfix(expression):
     """
-    Validate a postfix expression by mocking the evaluation process using a stack.
-    We push X for each pair of operands when we encounter an operator.
+    Validate a postfix expression by mirroring.
     """
     tokens = tokenize(expression)
     # Must have at least one operator.
