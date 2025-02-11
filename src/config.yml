@@ -1,4 +1,0 @@
-data_dir: resources/data/
-infix_file: provided_infix_strings.txt
-postfix_file: provided_postfix_strings.txt
-prefix_file: provided_prefix_strings.txt

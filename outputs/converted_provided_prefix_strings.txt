@@ -1,0 +1,42 @@
+Results for provided_prefix_strings.txt
+==================================================
+
+Original Expression: ++A - * ^BCD/ + EF * GHI
+Detected Type: prefix
+To Infix:   ((A + (((B ^ C) * D) - ((E + F) / (G * H)))) + I)
+To Postfix: ABC^D*EF+GH*/-+I+
+
+Original Expression: +-^ABC * D ** EFG
+Detected Type: prefix
+To Infix:   (((A ^ B) - C) + (D * ((E * F) * G)))
+To Postfix: AB^C-DEF*G**+
+
+Expression Stacks:
+==================================================
+
+Infix Stack:
+  ((A + (((B ^ C) * D) - ((E + F) / (G * H)))) + I)
+  (((A ^ B) - C) + (D * ((E * F) * G)))
+
+Prefix Stack:
+  ++A-*^BCD/+EF*GHI
+  +-^ABC*D**EFG
+
+Postfix Stack:
+  ABC^D*EF+GH*/-+I+
+  AB^C-DEF*G**+
+
+Verifying Expression Stacks:
+==================================================
+
+Infix Stack Verification:
+  ((A + (((B ^ C) * D) - ((E + F) / (G * H)))) + I): True
+  (((A ^ B) - C) + (D * ((E * F) * G))): True
+
+Prefix Stack Verification:
+  ++A-*^BCD/+EF*GHI: True
+  +-^ABC*D**EFG: True
+
+Postfix Stack Verification:
+  ABC^D*EF+GH*/-+I+: True
+  AB^C-DEF*G**+: True

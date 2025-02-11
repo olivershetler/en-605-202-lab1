@@ -1,0 +1,8 @@
+[Files]
+base_dir: resources/data
+infix_file: provided_infix_strings.txt
+prefix_file: provided_prefix_strings.txt
+postfix_file: provided_postfix_strings.txt
+illustrative_infix_file: provided_illustrative_infix_strings.txt
+illustrative_prefix_file: provided_illustrative_prefix_strings.txt
+illustrative_postfix_file: provided_illustrative_postfix_strings.txt

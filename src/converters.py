@@ -8,12 +8,11 @@ We use the Shunting-Yard algorithm for infix to postfix conversion and then reve
 import re
 import functools
 
-# Constants
-
-# Allowed operators and their precedence/associativity
+# Set of valid operators for expression handling
 OPERATORS = {'+', '-', '*', '/', '^'}
+# Operator precedence mapping (higher value = higher precedence)
 PRECEDENCE = {'^': 4, '*': 3, '/': 3, '+': 2, '-': 2}
-# Note: '^' is right-associative; all others are left-associative.
+# Operator associativity rules
 ASSOCIATIVITY = {'^': 'right', '+': 'left', '-': 'left', '*': 'left', '/': 'left'}
 
 # Helper functions
@@ -32,10 +31,32 @@ def strip_whitespace(expression):
 
 def tokenize(expression):
     """
-    Tokenize the expression.
+    Tokenize the expression with proper handling of operators and operands.
     """
-    strip_whitespace(expression)
-    return list(expression)
+    # First standardize the expression
+    expr = standardize_expression(expression)
+    
+    tokens = []
+    i = 0
+    while i < len(expr):
+        if expr[i] in OPERATORS:
+            # Handle double minus
+            if expr[i] == '-' and i + 1 < len(expr) and expr[i + 1] == '-':
+                tokens.append('+')
+                i += 2
+            else:
+                tokens.append(expr[i])
+                i += 1
+        elif expr[i].isalpha():
+            tokens.append(expr[i])
+            i += 1
+        elif expr[i] in '()':
+            tokens.append(expr[i])
+            i += 1
+        else:
+            i += 1  # Skip other characters
+            
+    return tokens
 
 
 # Stack class for use in conversion functions
@@ -86,17 +107,17 @@ def preprocess(func):
     return wrapper
 
 
-# Validation Functions
+# Validate the functions by printing True or False
 
 def validate_infix(expression):
     """
     Fully validate an infix expression.
 
-    This function performs three levels of checks:
-      1. Allowed characters: the expression must consist only of letters, digits,
+    Three level checks to debug the invalid expression inputs from initial testing.
+      - The expression must consist only of letters, digits,
          the operators (+, -, *, /, ^), and round parentheses.
-      2. Balanced parentheses: every '(' must have a corresponding ')'.
-      3. Proper token order: the tokens (operands, operators, and parentheses) must
+      - Balanced equations via '(' and a corresponding ')'.
+      - Proper token order based on its kind the tokens (operands, operators, and parentheses) must
          be in a syntactically valid sequence. For example:
             - The expression cannot start with an operator.
             - Two operands cannot appear in a row.
@@ -161,35 +182,40 @@ def validate_infix(expression):
 
 def validate_prefix(expression):
     """
-    Validate a prefix expression by mocking the evaluation process using a stack.
-    We push X for each pair of operands when we encounter an operator.
+    Validate a prefix expression by counting operators and operands.
+    For a valid prefix expression, at each point reading from left to right,
+    the number of operators must be greater than operands until the end.
     """
     tokens = tokenize(expression)
-    # Must have at least one operator.
-    if not any(is_operator(token) for token in tokens):
+    if not tokens:
         return False
-
-    stack = Stack()
-    # Process tokens in reverse order for prefix.
-    for token in reversed(tokens):
-        if is_operand(token):
-            stack.push(token)
-        elif is_operator(token):
-            if len(stack) < 2:
-                return False
-            # Pop two operands and push a dummy operand.
-            stack.pop()
-            stack.pop()
-            stack.push('X')
+        
+    # First token must be an operator
+    if not is_operator(tokens[0]):
+        return False
+        
+    operator_count = 0
+    operand_count = 0
+    
+    for token in tokens:
+        if is_operator(token):
+            operator_count += 1
+        elif is_operand(token):
+            operand_count += 1
         else:
             return False
-    return len(stack) == 1
+            
+        # At any point, if we have more operands than needed, it's invalid
+        if operand_count > operator_count + 1:
+            return False
+            
+    # At the end, operands should be exactly one more than operators
+    return operand_count == operator_count + 1
 
 
 def validate_postfix(expression):
     """
-    Validate a postfix expression by mocking the evaluation process using a stack.
-    We push X for each pair of operands when we encounter an operator.
+    Validate a postfix expression by mirroring.
     """
     tokens = tokenize(expression)
     # Must have at least one operator.
@@ -201,15 +227,19 @@ def validate_postfix(expression):
         if is_operand(token):
             stack.push(token)
         elif is_operator(token):
+            # Need at least two operands for an operator
             if len(stack) < 2:
                 return False
+            # Pop two operands and push result placeholder
             stack.pop()
             stack.pop()
             stack.push('X')
-        elif token == ' ':
+        elif token in [' ', '\t', '\n']:
             continue
         else:
             return False
+            
+    # At the end, should have exactly one result
     return len(stack) == 1
 
 
@@ -364,3 +394,58 @@ def postfix_to_prefix(expression):
     """Convert postfix to prefix via infix as an intermediate representation."""
     infix = postfix_to_infix(expression)
     return infix_to_prefix(infix)
+
+def clean_expression(expression: str) -> str:
+    """
+    Clean the expression by:
+    1. Replacing en-dash with regular hyphen
+    2. Ensuring consistent spacing
+    3. Removing any invalid characters
+    
+    Args:
+        expression (str): The input expression to clean
+    Returns:
+        str: The cleaned expression
+    """
+    # Replace en-dash with regular hyphen
+    expression = expression.replace('–', '-')
+    
+    # Remove any quotes or invalid characters
+    expression = ''.join(c for c in expression if c.isalnum() or c in '+-*/^ ' or c in '()')
+    
+    # Ensure consistent spacing
+    return ' '.join(expression.split())
+
+def validate_expression(expression: str, expr_type: str) -> bool:
+    """
+    Basic validation of expression format
+    
+    Args:
+        expression (str): The expression to validate
+        expr_type (str): Type of expression ('infix', 'prefix', or 'postfix')
+    Returns:
+        bool: True if expression appears valid
+    """
+    tokens = expression.split()
+    
+    # Basic check - need at least one operator and one operand
+    if not any(t in '+-*/^' for t in expression):
+        return False
+    if not any(t.isalnum() for t in tokens):
+        return False
+        
+    return True
+
+def standardize_expression(expr):
+    """Standardize the expression format"""
+    # Replace en-dash and em-dash with regular minus
+    expr = expr.replace('–', '-').replace('—', '-')
+    
+    # Remove all spaces and quotes
+    expr = ''.join(expr.split())
+    expr = expr.replace('"', '')
+    
+    # Handle any other special characters
+    expr = ''.join(c for c in expr if c.isalnum() or c in '+-*/^()' or c == '-')
+    
+    return expr

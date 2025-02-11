@@ -1,0 +1,57 @@
+Results for provided_postfix_strings.txt
+==================================================
+
+Original Expression: AB + C –
+Detected Type: infix
+Error processing expression: Invalid infix expression.
+
+Original Expression: ABC +-
+Detected Type: postfix
+To Infix:   (A - (B + C))
+To Prefix:  -A+BC
+
+Original Expression: AB -C + DEF -+^
+Detected Type: postfix
+To Infix:   (((A - B) + C) ^ (D + (E - F)))
+To Prefix:  ^+-ABC+D-EF
+
+Original Expression: ABCDE -+ ^*EF*-"
+Detected Type: postfix
+To Infix:   ((A * (B ^ (C + (D - E)))) - (E * F))
+To Prefix:  -*A^B+C-DE*EF
+
+Expression Stacks:
+==================================================
+
+Infix Stack:
+  (A - (B + C))
+  (((A - B) + C) ^ (D + (E - F)))
+  ((A * (B ^ (C + (D - E)))) - (E * F))
+
+Prefix Stack:
+  -A+BC
+  ^+-ABC+D-EF
+  -*A^B+C-DE*EF
+
+Postfix Stack:
+  ABC+-
+  AB-C+DEF-+^
+  ABCDE-+^*EF*-
+
+Verifying Expression Stacks:
+==================================================
+
+Infix Stack Verification:
+  (A - (B + C)): True
+  (((A - B) + C) ^ (D + (E - F))): True
+  ((A * (B ^ (C + (D - E)))) - (E * F)): True
+
+Prefix Stack Verification:
+  -A+BC: True
+  ^+-ABC+D-EF: True
+  -*A^B+C-DE*EF: True
+
+Postfix Stack Verification:
+  ABC+-: True
+  AB-C+DEF-+^: True
+  ABCDE-+^*EF*-: True

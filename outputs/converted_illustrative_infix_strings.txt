@@ -1,0 +1,108 @@
+Results for illustrative_infix_strings.txt
+==================================================
+
+Original Expression: A + B
+Detected Type: infix
+To Prefix:  +AB
+To Postfix: AB+
+
+Original Expression: A + B * C
+Detected Type: infix
+To Prefix:  +A*BC
+To Postfix: ABC*+
+
+Original Expression: (A + B) * C
+Detected Type: infix
+To Prefix:  *+ABC
+To Postfix: AB+C*
+
+Original Expression: A - B - C
+Detected Type: infix
+To Prefix:  -A-BC
+To Postfix: AB-C-
+
+Original Expression: A ^ B ^ C
+Detected Type: infix
+To Prefix:  ^^ABC
+To Postfix: ABC^^
+
+Original Expression: ((A + (B * C)) - (D / E))
+Detected Type: infix
+To Prefix:  -+A*BC/DE
+To Postfix: ABC*+DE/-
+
+Original Expression: A + B * C - D / E ^ F
+Detected Type: infix
+To Prefix:  +A-*BC/D^EF
+To Postfix: ABC*+DEF^/-
+
+Original Expression: (A + (B - (C * (D / E))))
+Detected Type: infix
+To Prefix:  +A-B*C/DE
+To Postfix: ABCDE/*-+
+
+Expression Stacks:
+==================================================
+
+Infix Stack:
+  A+B
+  A+B*C
+  (A+B)*C
+  A-B-C
+  A^B^C
+  ((A+(B*C))-(D/E))
+  A+B*C-D/E^F
+  (A+(B-(C*(D/E))))
+
+Prefix Stack:
+  +AB
+  +A*BC
+  *+ABC
+  -A-BC
+  ^^ABC
+  -+A*BC/DE
+  +A-*BC/D^EF
+  +A-B*C/DE
+
+Postfix Stack:
+  AB+
+  ABC*+
+  AB+C*
+  AB-C-
+  ABC^^
+  ABC*+DE/-
+  ABC*+DEF^/-
+  ABCDE/*-+
+
+Verifying Expression Stacks:
+==================================================
+
+Infix Stack Verification:
+  A+B: True
+  A+B*C: True
+  (A+B)*C: True
+  A-B-C: True
+  A^B^C: True
+  ((A+(B*C))-(D/E)): True
+  A+B*C-D/E^F: True
+  (A+(B-(C*(D/E)))): True
+
+Prefix Stack Verification:
+  +AB: True
+  +A*BC: True
+  *+ABC: True
+  -A-BC: True
+  ^^ABC: True
+  -+A*BC/DE: True
+  +A-*BC/D^EF: True
+  +A-B*C/DE: True
+
+Postfix Stack Verification:
+  AB+: True
+  ABC*+: True
+  AB+C*: True
+  AB-C-: True
+  ABC^^: True
+  ABC*+DE/-: True
+  ABC*+DEF^/-: True
+  ABCDE/*-+: True
