@@ -1,0 +1,15 @@
+{
+  "original_expression": "A + B $ C * D",
+  "errors": {
+    "invalid_chars": [],
+    "special_chars": [
+      "$"
+    ],
+    "spacing_errors": [],
+    "pattern_errors": [
+      "Invalid operator/operand ratio"
+    ],
+    "has_errors": true
+  },
+  "recovered_expression": null
+}

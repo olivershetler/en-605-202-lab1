@@ -1,0 +1,4 @@
+Input (infix) -> Output (postfix)
+========================================
+(A + B) * (C ^(D-E) + F) – G -> ERROR: Invalid infix expression.
+A + (((B-C) * (D-E) + F)/G) ^ (H-J) -> ABC-DE-*F+G/HJ-^+

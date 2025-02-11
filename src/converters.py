@@ -364,3 +364,44 @@ def postfix_to_prefix(expression):
     """Convert postfix to prefix via infix as an intermediate representation."""
     infix = postfix_to_infix(expression)
     return infix_to_prefix(infix)
+
+def clean_expression(expression: str) -> str:
+    """
+    Clean the expression by:
+    1. Replacing en-dash with regular hyphen
+    2. Ensuring consistent spacing
+    3. Removing any invalid characters
+    
+    Args:
+        expression (str): The input expression to clean
+    Returns:
+        str: The cleaned expression
+    """
+    # Replace en-dash with regular hyphen
+    expression = expression.replace('–', '-')
+    
+    # Remove any quotes or invalid characters
+    expression = ''.join(c for c in expression if c.isalnum() or c in '+-*/^ ' or c in '()')
+    
+    # Ensure consistent spacing
+    return ' '.join(expression.split())
+
+def validate_expression(expression: str, expr_type: str) -> bool:
+    """
+    Basic validation of expression format
+    
+    Args:
+        expression (str): The expression to validate
+        expr_type (str): Type of expression ('infix', 'prefix', or 'postfix')
+    Returns:
+        bool: True if expression appears valid
+    """
+    tokens = expression.split()
+    
+    # Basic check - need at least one operator and one operand
+    if not any(t in '+-*/^' for t in expression):
+        return False
+    if not any(t.isalnum() for t in tokens):
+        return False
+        
+    return True

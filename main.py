@@ -5,8 +5,9 @@ from typing import Dict, List, Callable
 from datetime import datetime
 
 from src.converters import *
+from src.find_bugs import BugTracker
 
-CONFIG_PATH = 'src/config.yaml'
+CONFIG_PATH = 'src/config.yml'
 EXPRESSION_TYPES = ['infix', 'prefix', 'postfix']
 OUTPUT_DIR = 'outputs'
 
@@ -32,14 +33,14 @@ def get_data_paths() -> Dict[str, Path]:
     """
     try:
         config = get_config()
-        required_keys = ['base_dir', 'infix_file', 'prefix_file', 'postfix_file']
+        required_keys = ['data_dir', 'infix_file', 'prefix_file', 'postfix_file']
         if not all(key in config for key in required_keys):
             raise KeyError(f"Config must contain: {required_keys}")
         cwd = Path(os.getcwd())
-        base_dir = cwd / Path(config['base_dir'])
-        infix_path = base_dir / config['infix_file']
-        prefix_path = base_dir / config['prefix_file']
-        postfix_path = base_dir / config['postfix_file']
+        data_dir = cwd / Path(config['data_dir'])
+        infix_path = data_dir / config['infix_file']
+        prefix_path = data_dir / config['prefix_file']
+        postfix_path = data_dir / config['postfix_file']
         return {
             'infix': infix_path,
             'prefix': prefix_path,
@@ -49,10 +50,14 @@ def get_data_paths() -> Dict[str, Path]:
         raise Exception(f"Error getting data paths: {e}")
 
 def read_expressions(file_path: Path) -> List[str]:
+    """Read expressions and filter out empty lines"""
     try:
+        print(f"Reading expressions from {file_path.name}...")
         with open(file_path, 'r') as f:
             expressions = f.read().split('\n')
-            return list(filter(None, expressions))
+            filtered = list(filter(None, expressions))
+            print(f"Found {len(filtered)} expressions")
+            return filtered
     except FileNotFoundError:
         raise FileNotFoundError(f"Expression file not found: {file_path}")
 
@@ -62,7 +67,15 @@ def format_conversions(expressions: List[str],
 
 def convert_expressions(converter: Callable[[str], str], 
                        expressions: List[str]) -> Dict[str, str]:
-    return dict(zip(expressions, map(converter, expressions)))
+    """Convert expressions with error handling"""
+    results = {}
+    for expr in expressions:
+        try:
+            results[expr] = converter(expr)
+        except Exception as e:
+            print(f"Error converting expression '{expr}': {str(e)}")
+            results[expr] = "ERROR: " + str(e)
+    return results
 
 def format_results(conversions: Dict[str, str]) -> str:
     return '\n'.join([f'{k} -> {v}' for k, v in conversions.items()])
@@ -93,6 +106,8 @@ def save_conversions(input_type: str, expressions: Dict[str, str],
         filename = f"{input_type}_to_{output_type}_{timestamp}.txt"
         output_path = output_dir / filename
         
+        print(f"Saving conversion to {filename}...")  # Add debug print
+        
         with open(output_path, 'w') as f:
             f.write(f"Input ({input_type}) -> Output ({output_type})\n")
             f.write("=" * 40 + "\n")
@@ -100,39 +115,38 @@ def save_conversions(input_type: str, expressions: Dict[str, str],
                 f.write(f"{input_expr} -> {output_expr}\n")
 
 def main():
+    print("Starting expression conversion process...")
     paths = get_data_paths()
     try:
         # Generate timestamp for file names
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         
+        print("\nReading input files:")
+        print("-" * 40)
         infix_expressions = read_expressions(paths['infix'])
         prefix_expressions = read_expressions(paths['prefix'])
         postfix_expressions = read_expressions(paths['postfix'])
 
-        # Convert prefix input
+        print("\nConverting expressions:")
+        print("-" * 40)
+        
+        print("\nProcessing prefix expressions...")
         prefix_to_others = {
             'infix': convert_expressions(prefix_to_infix, prefix_expressions),
             'postfix': convert_expressions(prefix_to_postfix, prefix_expressions)
         }
-        save_conversions('prefix', prefix_to_others['infix'], ['infix'], timestamp)
-        save_conversions('prefix', prefix_to_others['postfix'], ['postfix'], timestamp)
-
-        # Convert infix input
+        
+        print("\nProcessing infix expressions...")
         infix_to_others = {
             'prefix': convert_expressions(infix_to_prefix, infix_expressions),
             'postfix': convert_expressions(infix_to_postfix, infix_expressions)
         }
-        save_conversions('infix', infix_to_others['prefix'], ['prefix'], timestamp)
-        save_conversions('infix', infix_to_others['postfix'], ['postfix'], timestamp)
-
-        # Convert postfix input
+        
+        print("\nProcessing postfix expressions...")
         postfix_to_others = {
             'infix': convert_expressions(postfix_to_infix, postfix_expressions),
             'prefix': convert_expressions(postfix_to_prefix, postfix_expressions)
         }
-        save_conversions('postfix', postfix_to_others['infix'], ['infix'], timestamp)
-        save_conversions('postfix', postfix_to_others['prefix'], ['prefix'], timestamp)
-
         # Format results for console output as before
         infix_from_prefix = format_results(prefix_to_others['infix'])
         infix_from_postfix = format_results(postfix_to_others['infix'])
@@ -140,6 +154,29 @@ def main():
         postfix_from_prefix = format_results(prefix_to_others['postfix'])
         prefix_from_infix = format_results(infix_to_others['prefix'])
         prefix_from_postfix = format_results(postfix_to_others['prefix'])
+
+        # Add explicit saves for each conversion type
+        print("\nSaving conversion results...")
+        
+        # Save prefix conversions
+        save_conversions('prefix', prefix_to_others['infix'], ['infix'], timestamp)
+        save_conversions('prefix', prefix_to_others['postfix'], ['postfix'], timestamp)
+        
+        # Save infix conversions
+        save_conversions('infix', infix_to_others['prefix'], ['prefix'], timestamp)
+        save_conversions('infix', infix_to_others['postfix'], ['postfix'], timestamp)
+        
+        # Save postfix conversions
+        save_conversions('postfix', postfix_to_others['infix'], ['infix'], timestamp)
+        save_conversions('postfix', postfix_to_others['prefix'], ['prefix'], timestamp)
+
+        # Track bugs using the new BugTracker class
+        bug_tracker = BugTracker()
+        bug_tracker.save_errors({
+            'infix': infix_to_others,
+            'prefix': prefix_to_others,
+            'postfix': postfix_to_others
+        }, timestamp)
 
         # Format a string to print the results
         result = f"""Infix from Prefix:

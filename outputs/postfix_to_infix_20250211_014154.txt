@@ -1,0 +1,6 @@
+Input (postfix) -> Output (infix)
+========================================
+AB + C – -> ERROR: Invalid postfix expression.
+ABC +- -> (A - (B + C))
+AB -C + DEF -+^ -> (((A - B) + C) ^ (D + (E - F)))
+ABCDE -+ ^*EF*-" -> ERROR: Invalid postfix expression.

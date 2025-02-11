@@ -1,0 +1,40 @@
+Conversion Errors
+========================================
+
+Infix Expression Errors:
+--------------------
+Converting to prefix:
+Input:  (A + B) * (C ^(D-E) + F) – G
+Error:  ERROR: Invalid infix expression.
+
+Converting to postfix:
+Input:  (A + B) * (C ^(D-E) + F) – G
+Error:  ERROR: Invalid infix expression.
+
+
+Prefix Expression Errors:
+--------------------
+No errors found for prefix to infix conversions
+
+No errors found for prefix to postfix conversions
+
+
+Postfix Expression Errors:
+--------------------
+Converting to infix:
+Input:  AB + C –
+Error:  ERROR: Invalid postfix expression.
+
+Converting to infix:
+Input:  ABCDE -+ ^*EF*-"
+Error:  ERROR: Invalid postfix expression.
+
+Converting to prefix:
+Input:  AB + C –
+Error:  ERROR: Invalid postfix expression.
+
+Converting to prefix:
+Input:  ABCDE -+ ^*EF*-"
+Error:  ERROR: Invalid postfix expression.
+
+
